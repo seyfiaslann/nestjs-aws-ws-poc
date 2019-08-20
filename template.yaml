@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  DynamoGsStreamArn:
+    Type: String  
+  StreamConfigStreamArn:
+    Type: String
+  ModerationStreamArn:
+    Type: String        
+  SecurityGroupId:
+    Type: String
+  SubnetId1:
+    Type: String  
+  SubnetId2:
+    Type: String      
+Resources:
+  ApiUIV1WebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: ApiUIV1WebSocketApi
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+  ApiUIV1WebRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiUIV1WebSocketApi
+      RouteKey: $proxy
+      AuthorizationType: NONE
+      OperationName: WebRouteRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ApiUIV1WebRouteIntegration            
+  ApiUIV1WebRouteIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ApiUIV1WebSocketApi
+      Description: ApiUIV1WebRouteIntegration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiUIV1WebSocketApiHandler.Arn}/invocations
+  ApiUIV1WebSocketApiHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: 'dist/handlers/api-ui-ws-listener.handler'
+      Timeout: 30
+      MemorySize: 512
+      Runtime: nodejs10.x
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonDynamoDBFullAccess         
+      VpcConfig:
+        SecurityGroupIds:
+        - !Ref SecurityGroupId
+        SubnetIds:
+        - !Ref SubnetId1
+        - !Ref SubnetId2

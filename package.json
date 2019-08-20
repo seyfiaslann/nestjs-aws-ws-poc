@@ -1,0 +1,63 @@
+{
+  "name": "nestjs-aws-ws-poc",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start:dev": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
+    "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
+    "start:prod": "node dist/main.js",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "sam:dev:package": "sam package --output-template-file packaged.yaml --s3-bucket bbdev-classification",
+    "sam:dev:deploy": "sam deploy --template-file ./packaged.yaml --stack-name WebSocketDemo --capabilities CAPABILITY_IAM --region eu-west-1 --parameter-overrides DynamoGsStreamArn=arn:aws:dynamodb:eu-west-1:118769323873:table/general_storage/stream/2019-05-14T06:36:08.535 SecurityGroupId=sg-0f135fed7fbadbfd3 SubnetId1=subnet-0a073e79264ebceff SubnetId2=subnet-0a073e79264ebceff StreamConfigStreamArn=arn:aws:dynamodb:eu-west-1:118769323873:table/stream_config/stream/2019-06-12T12:17:03.871 ModerationStreamArn=arn:aws:dynamodb:eu-west-1:118769323873:table/moderation_logs/stream/2019-06-21T16:36:15.813",
+    "deploy:dev": "npm run build && npm run sam:dev:package && npm run sam:dev:deploy"
+  },
+  "dependencies": {
+    "@nestjs/common": "^6.0.0",
+    "@nestjs/core": "^6.0.0",
+    "@nestjs/platform-express": "^6.0.0",
+    "aws-lambda": "^0.1.2",
+    "reflect-metadata": "^0.1.12",
+    "rimraf": "^2.6.2",
+    "rxjs": "^6.3.3"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^6.0.0",
+    "@types/express": "4.16.1",
+    "@types/jest": "24.0.11",
+    "@types/node": "11.13.4",
+    "@types/supertest": "2.0.7",
+    "jest": "24.7.1",
+    "prettier": "1.17.0",
+    "supertest": "4.0.2",
+    "ts-jest": "24.0.2",
+    "ts-node": "8.1.0",
+    "tsc-watch": "2.2.1",
+    "tsconfig-paths": "3.8.0",
+    "tslint": "5.16.0",
+    "typescript": "3.4.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
