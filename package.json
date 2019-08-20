@@ -18,7 +18,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "sam:dev:package": "sam package --output-template-file packaged.yaml --s3-bucket bbdev-classification",
-    "sam:dev:deploy": "sam deploy --template-file ./packaged.yaml --stack-name WebSocketDemo --capabilities CAPABILITY_IAM --region eu-west-1 --parameter-overrides DynamoGsStreamArn=arn:aws:dynamodb:eu-west-1:118769323873:table/general_storage/stream/2019-05-14T06:36:08.535 SecurityGroupId=sg-0f135fed7fbadbfd3 SubnetId1=subnet-0a073e79264ebceff SubnetId2=subnet-0a073e79264ebceff StreamConfigStreamArn=arn:aws:dynamodb:eu-west-1:118769323873:table/stream_config/stream/2019-06-12T12:17:03.871 ModerationStreamArn=arn:aws:dynamodb:eu-west-1:118769323873:table/moderation_logs/stream/2019-06-21T16:36:15.813",
+    "sam:dev:deploy": "sam deploy --template-file ./packaged.yaml --stack-name WebSocketDemo --capabilities CAPABILITY_IAM --region eu-west-1",
     "deploy:dev": "npm run build && npm run sam:dev:package && npm run sam:dev:deploy"
   },
   "dependencies": {

@@ -1,18 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Parameters:
-  DynamoGsStreamArn:
-    Type: String  
-  StreamConfigStreamArn:
-    Type: String
-  ModerationStreamArn:
-    Type: String        
-  SecurityGroupId:
-    Type: String
-  SubnetId1:
-    Type: String  
-  SubnetId2:
-    Type: String      
 Resources:
   ApiUIV1WebSocketApi:
     Type: AWS::ApiGatewayV2::Api
@@ -24,13 +11,35 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref ApiUIV1WebSocketApi
-      RouteKey: $proxy
+      RouteKey: $default
       AuthorizationType: NONE
       OperationName: WebRouteRoute
       Target: !Join
         - '/'
         - - 'integrations'
           - !Ref ApiUIV1WebRouteIntegration            
+  ApiUIV1WebConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiUIV1WebSocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      OperationName: ApiUIV1WebConnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ApiUIV1WebRouteIntegration  
+  ApiUIV1WebDisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiUIV1WebSocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: ApiUIV1WebDisconnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ApiUIV1WebRouteIntegration             
   ApiUIV1WebRouteIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
@@ -49,10 +58,33 @@ Resources:
       Runtime: nodejs10.x
       Policies:
         - AWSLambdaVPCAccessExecutionRole
-        - AmazonDynamoDBFullAccess         
-      VpcConfig:
-        SecurityGroupIds:
-        - !Ref SecurityGroupId
-        SubnetIds:
-        - !Ref SubnetId1
-        - !Ref SubnetId2
+        - AmazonDynamoDBFullAccess
+        
+  Deployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+    - ApiUIV1WebConnectRoute
+    - ApiUIV1WebDisconnectRoute
+    - ApiUIV1WebRoute
+    Properties:
+      ApiId: !Ref ApiUIV1WebSocketApi
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: Prod
+      Description: Prod Stage
+      DeploymentId: !Ref Deployment
+      ApiId: !Ref ApiUIV1WebSocketApi
+  ApiUIV1WebSocketApiPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - ApiUIV1WebSocketApi
+      - ApiUIV1WebSocketApiHandler
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ApiUIV1WebSocketApiHandler
+      Principal: apigateway.amazonaws.com      
+Outputs:      
+  WebSocketURI:
+    Description: "The WSS Protocol URI to connect to"
+    Value: !Join [ '', [ 'wss://', !Ref ApiUIV1WebSocketApi, '.execute-api.',!Ref 'AWS::Region','.amazonaws.com/',!Ref 'Stage'] ]      
