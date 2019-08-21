@@ -25,11 +25,13 @@
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
     "@nestjs/platform-express": "^6.0.0",
+    "@nestjs/websockets": "^6.5.3",
     "aws-lambda": "^0.1.2",
     "aws-sdk": "^2.513.0",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
-    "rxjs": "^6.3.3"
+    "rxjs": "^6.3.3",
+    "socket-io": "^1.0.0"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.0.0",
