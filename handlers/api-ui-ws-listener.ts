@@ -35,5 +35,5 @@ export const handler: Handler = async (event: any, context: Context, callback) =
             break;
     }
 
-    return { success: true };
+    return {};
 };
