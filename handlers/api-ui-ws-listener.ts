@@ -4,7 +4,7 @@ import { DynamoRepo } from '../src/dynamo.repo';
 import { SocketEntity } from '../src/socket.entity';
 
 let apigwManagementApi: ApiGatewayManagementApi;
-const dynamoRepo = new DynamoRepo<SocketEntity>('test');
+const dynamoRepo = new DynamoRepo<SocketEntity>('test_sockets');
 
 export const handler: Handler = async (event: any, context: Context, callback) => {
     console.log(JSON.stringify(event));
