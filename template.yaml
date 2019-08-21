@@ -59,7 +59,7 @@ Resources:
       Policies:
         - AWSLambdaVPCAccessExecutionRole
         - AmazonDynamoDBFullAccess
-        
+        - AmazonAPIGatewayInvokeFullAccess
   Deployment:
     Type: AWS::ApiGatewayV2::Deployment
     DependsOn:

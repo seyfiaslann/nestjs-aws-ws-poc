@@ -1,7 +1,7 @@
 import { Context, Handler } from 'aws-lambda';
 import { ApiGatewayManagementApi } from 'aws-sdk';
 
-export const handler: Handler = async (event: any, context: Context) => {
+export const handler: Handler = async (event: any, context: Context, callback) => {
     console.log(JSON.stringify(event));
 
     const apigwManagementApi = new ApiGatewayManagementApi({
@@ -10,8 +10,10 @@ export const handler: Handler = async (event: any, context: Context) => {
     });
 
     const connectionId = event.requestContext.connectionId;
-
-    await apigwManagementApi.postToConnection({ ConnectionId: connectionId, Data: { body: 'hello' } }).promise();
+    
+    if((event.requestContext.eventType === 'CONNECT' || event.requestContext.eventType === 'DISCONNECT') === false) {
+        await apigwManagementApi.postToConnection({ ConnectionId: connectionId, Data: "Hello" }).promise();    
+    }
 
     return { body: 'Hello' };
 };
