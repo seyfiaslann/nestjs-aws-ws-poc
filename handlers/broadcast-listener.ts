@@ -2,7 +2,7 @@ import { Context, Handler } from 'aws-lambda';
 import { ApiGatewayManagementApi } from 'aws-sdk';
 import { DynamoRepo } from '../src/dynamo.repo';
 import { SocketEntity } from '../src/socket.entity';
-import { StreamSample } from 'src/stream';
+import { StreamSample } from '../src/stream';
 
 let apigwManagementApi: ApiGatewayManagementApi = new ApiGatewayManagementApi({
     apiVersion: '2018-11-29',
