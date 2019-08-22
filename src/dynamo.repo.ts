@@ -149,7 +149,7 @@ export class DynamoRepo<TEntity extends Entity> implements BaseRepository<TEntit
         return items;
     }
 
-    protected async scan<T extends TEntity>(filterExpression?: string, { values, names, fields }: {
+    async scan<T extends TEntity>(filterExpression?: string, { values, names, fields }: {
         values?: any,
         names?: any,
         fields?: (keyof T)[],

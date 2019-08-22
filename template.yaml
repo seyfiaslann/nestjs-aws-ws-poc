@@ -60,6 +60,17 @@ Resources:
         - AWSLambdaVPCAccessExecutionRole
         - AmazonDynamoDBFullAccess
         - AmazonAPIGatewayInvokeFullAccess
+  BroadcastListenerHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: 'dist/handlers/broadcast-listener.handler'
+      Timeout: 30
+      MemorySize: 512
+      Runtime: nodejs10.x
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonDynamoDBFullAccess
+        - AmazonAPIGatewayInvokeFullAccess        
   Deployment:
     Type: AWS::ApiGatewayV2::Deployment
     DependsOn:
