@@ -14,7 +14,7 @@ export const handler: Handler = async (event: any, context: Context, callback) =
 
     switch (event.requestContext.eventType) {
         case 'CONNECT':
-            await eventsGateway.handleConnection(client, [{ connectionId, event }]);
+            await eventsGateway.handleConnection(client, { connectionId, event });
             break;
         case 'DISCONNECT':
             await eventsGateway.handleDisconnect(client, connectionId);
