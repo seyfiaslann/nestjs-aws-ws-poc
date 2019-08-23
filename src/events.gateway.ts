@@ -31,7 +31,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('events')
     async handleEvent(client: SocketClient, data: string) {
-        client.send(StreamSample);
+        await client.send(StreamSample);
     }
 }
 
