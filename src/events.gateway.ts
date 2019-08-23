@@ -26,7 +26,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
 
         console.log('Connected');
-        client.send(JSON.stringify({ event: 'connection', data: { success: true }}));
+        await client.send(JSON.stringify({ event: 'connection', data: { success: true }}));
     }
 
     @SubscribeMessage('events')
