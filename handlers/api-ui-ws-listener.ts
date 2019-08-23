@@ -41,7 +41,7 @@ export class ApiGateWaySocketClient implements SocketClient {
     }
 
     async send(data: any) {
-        await apigwManagementApi.postToConnection({ ConnectionId: this.connectionId, Data: data }).promise();
+        await this.apigwManagementApi.postToConnection({ ConnectionId: this.connectionId, Data: data }).promise();
     }
 
 }
