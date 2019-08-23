@@ -1,40 +1,47 @@
 import { Context, Handler } from 'aws-lambda';
 import { ApiGatewayManagementApi } from 'aws-sdk';
-import { DynamoRepo } from '../src/dynamo.repo';
-import { SocketEntity } from '../src/socket.entity';
-import { StreamSample } from '../src/stream';
+import { EventsGateway, SocketClient } from '../src/events.gateway';
+import { SocketRepo } from '../src/socket.repo';
 
-let apigwManagementApi: ApiGatewayManagementApi;
-const dynamoRepo = new DynamoRepo<SocketEntity>('test_sockets');
+const dynamoRepo = new SocketRepo('test_sockets');
+const eventsGateway = new EventsGateway(dynamoRepo);
 
 export const handler: Handler = async (event: any, context: Context, callback) => {
     console.log(JSON.stringify(event));
 
-    if (!apigwManagementApi) {
-        console.log('Initiating gateway api');
-        apigwManagementApi = new ApiGatewayManagementApi({
-            apiVersion: '2018-11-29',
-            endpoint: event.requestContext.domainName + '/' + event.requestContext.stage,
-        });
-    } else {
-        console.log('Api gateway is already initiated');
-    }
-
-    const connectionId = event.requestContext.connectionId;
-
-    const response = StreamSample;
+    const { domainName, stage, connectionId } = event.requestContext;
+    const client: ApiGateWaySocketClient = new ApiGateWaySocketClient(domainName, stage, connectionId);
 
     switch (event.requestContext.eventType) {
         case 'CONNECT':
-            await dynamoRepo.add({ id: connectionId, event: JSON.stringify(event) });
+            await eventsGateway.handleConnection(client, [{ connectionId, event }]);
             break;
         case 'DISCONNECT':
-            await dynamoRepo.delete(connectionId);
+            await eventsGateway.handleDisconnect(client, connectionId);
             break;
         default:
-            await apigwManagementApi.postToConnection({ ConnectionId: connectionId, Data: response }).promise();
+            await eventsGateway.handleEvent(client, '');
             break;
     }
 
     return {};
 };
+
+export class ApiGateWaySocketClient implements SocketClient {
+
+    apigwManagementApi: ApiGatewayManagementApi;
+    connectionId: string;
+
+    constructor(domainName: string, stage: string, connectionId: string) {
+        this.apigwManagementApi = new ApiGatewayManagementApi({
+            apiVersion: '2018-11-29',
+            endpoint: domainName + '/' + stage,
+        });
+        this.connectionId = connectionId;
+    }
+
+    async send(data: any) {
+        await apigwManagementApi.postToConnection({ ConnectionId: this.connectionId, Data: data }).promise();
+    }
+
+}

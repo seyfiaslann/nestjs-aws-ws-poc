@@ -25,6 +25,7 @@
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
     "@nestjs/platform-express": "^6.0.0",
+    "@nestjs/platform-ws": "^6.5.3",
     "@nestjs/websockets": "^6.5.3",
     "aws-lambda": "^0.1.2",
     "aws-sdk": "^2.513.0",

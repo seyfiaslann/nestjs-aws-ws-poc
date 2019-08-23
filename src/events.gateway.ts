@@ -2,13 +2,39 @@ import {
     SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
-    WsResponse,
+    OnGatewayConnection,
+    OnGatewayDisconnect,
 } from '@nestjs/websockets';
+import { SocketEntity } from './socket.entity';
+import { SocketRepo } from './socket.repo';
+import { StreamSample } from './stream';
 
-@WebSocketGateway()
-export class EventsGateway {
-    @SubscribeMessage('events')
-    handleEvent(client: any, data: string): string {
-        return data;
+@WebSocketGateway(8080, { transports: ['websocket'] })
+export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+
+    constructor(private readonly socketRepo: SocketRepo) { }
+
+    async handleDisconnect(client: SocketClient, connectionId?: string) {
+        if (connectionId) {
+            await this.socketRepo.delete(connectionId);
+        }
+        console.log('Disconnected');
     }
+    async handleConnection(client: SocketClient, ...args: any[]) {
+        if (args[0] && args[0].connectionId) {
+            this.socketRepo.add({ id: args[0].connectionId, event: JSON.stringify(args[0]) });
+        }
+
+        console.log('Connected');
+        client.send(JSON.stringify({ event: 'connection', data: { success: true }}));
+    }
+
+    @SubscribeMessage('events')
+    async handleEvent(client: SocketClient, data: string) {
+        client.send(StreamSample);
+    }
+}
+
+export interface SocketClient {
+    send(data: any);
 }

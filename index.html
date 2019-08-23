@@ -1,0 +1,21 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
+</head>
+<body>
+    <script>
+        const socket = io('wss://adk1xq190k.execute-api.eu-west-1.amazonaws.com', {
+            path: '/Prod',
+            transports: ['websocket'],
+            query: {
+                token: 'cde'
+            },
+        });
+
+        socket.on('connect', () => {
+            console.log(socket.id); // 'G5p5...'
+        });
+    </script>
+</body>
+</html>
