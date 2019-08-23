@@ -4,5 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SocketRepo extends DynamoRepo<SocketEntity> {
-
+    constructor() {
+        super('test_sockets');
+    }
 }

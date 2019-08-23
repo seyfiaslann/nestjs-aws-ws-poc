@@ -1,13 +1,27 @@
 import { Context, Handler } from 'aws-lambda';
 import { ApiGatewayManagementApi } from 'aws-sdk';
 import { EventsGateway, SocketClient } from '../src/events.gateway';
-import { SocketRepo } from '../src/socket.repo';
+import { AppModule } from 'src/app.module';
+import { NestFactory } from '@nestjs/core';
 
-const dynamoRepo = new SocketRepo('test_sockets');
-const eventsGateway = new EventsGateway(dynamoRepo);
+let app: any;
+
+async function bootstrap() {
+    app = await NestFactory.create(AppModule);
+}
+
+let eventsGateway: EventsGateway;
 
 export const handler: Handler = async (event: any, context: Context, callback) => {
     console.log(JSON.stringify(event));
+
+    if (!app) {
+        console.log('Initiating dependencies');
+        await bootstrap();
+        eventsGateway = app.get(EventsGateway);
+    } else {
+        console.log('System already initiated');
+    }
 
     const { domainName, stage, connectionId } = event.requestContext;
     const client: ApiGateWaySocketClient = new ApiGateWaySocketClient(domainName, stage, connectionId);
