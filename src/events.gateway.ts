@@ -22,11 +22,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     async handleConnection(client: SocketClient, ...args: any[]) {
         if (args[0] && args[0].connectionId) {
-            this.socketRepo.add({ id: args[0].connectionId, event: JSON.stringify(args[0]) });
+            await this.socketRepo.add({ id: args[0].connectionId, event: JSON.stringify(args[0]) });
         }
 
         console.log('Connected');
-        await client.send(JSON.stringify({ event: 'connection', data: { success: true }}));
     }
 
     @SubscribeMessage('events')
