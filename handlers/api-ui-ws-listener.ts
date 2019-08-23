@@ -1,7 +1,7 @@
 import { Context, Handler } from 'aws-lambda';
 import { ApiGatewayManagementApi } from 'aws-sdk';
 import { EventsGateway, SocketClient } from '../src/events.gateway';
-import { AppModule } from 'src/app.module';
+import { AppModule } from '../src/app.module';
 import { NestFactory } from '@nestjs/core';
 
 let app: any;
