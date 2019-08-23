@@ -3,6 +3,8 @@ import { ApiGatewayManagementApi } from 'aws-sdk';
 import { EventsGateway, SocketClient } from '../src/events.gateway';
 import { AppModule } from '../src/app.module';
 import { NestFactory } from '@nestjs/core';
+import * as _ from 'lodash';
+import { WsException } from '@nestjs/websockets';
 
 let app: any;
 
@@ -34,7 +36,17 @@ export const handler: Handler = async (event: any, context: Context, callback) =
             await eventsGateway.handleDisconnect(client, connectionId);
             break;
         default:
-            await eventsGateway.handleEvent(client, '');
+            const body = JSON.parse(event.body);
+            if (body.event) {
+                const funcName = 'handle' + (body.event.split('_').map(i => _.upperFirst(i)).join(''));
+                if (eventsGateway[funcName]) {
+                    await eventsGateway[funcName](client, body.data);
+                } else {
+                    throw new WsException('function not found');
+                }
+            } else {
+                throw new WsException('event not found');
+            }
             break;
     }
 
