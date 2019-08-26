@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { ExpressAdapter } from '@nestjs/platform-express';
 import * as express from 'express';
-import { AppModule } from '../src/app.module';
+import { ApiModule } from '../src/api.module';
 
 let expressApp: any;
 const serverlessHttp: any = require('serverless-http');
@@ -11,7 +11,7 @@ const serverlessHttp: any = require('serverless-http');
 async function bootstrapApp() {
   expressApp = express();
   const adapter = new ExpressAdapter(expressApp);
-  const app = await NestFactory.create(AppModule, adapter);
+  const app = await NestFactory.create(ApiModule, adapter);
 
   app.enableCors();
   await app.init();
