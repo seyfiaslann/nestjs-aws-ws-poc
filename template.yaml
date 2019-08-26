@@ -99,7 +99,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:      
       Runtime: nodejs8.10
-      Handler: 'dist/handlers/api-http-listener.handler'
+      Handler: 'dist/handlers/api-ui-http-listener.handler'
       Timeout: 30
       MemorySize: 512
       Policies:
