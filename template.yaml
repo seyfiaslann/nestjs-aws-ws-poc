@@ -94,7 +94,23 @@ Resources:
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref ApiUIV1WebSocketApiHandler
-      Principal: apigateway.amazonaws.com      
+      Principal: apigateway.amazonaws.com
+  ApiUiV1HttpTest:    
+    Type: 'AWS::Serverless::Function'
+    Properties:      
+      Runtime: nodejs8.10
+      Handler: 'dist/handlers/api-http-listener.handler'
+      Timeout: 30
+      MemorySize: 512
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonDynamoDBFullAccess
+      Events:
+        ApiUiV1:
+          Type: Api
+          Properties:
+            Path: /api/{proxy+}
+            Method: ANY            
 Outputs:      
   WebSocketURI:
     Description: "The WSS Protocol URI to connect to"
