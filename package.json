@@ -28,7 +28,7 @@
     "@nestjs/platform-ws": "^6.5.3",
     "@nestjs/websockets": "^6.5.3",
     "aws-lambda": "^1.0.5",
-    "aws-sdk": "^2.513.0",
+    "aws-sdk": "^2.814.0",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3",
